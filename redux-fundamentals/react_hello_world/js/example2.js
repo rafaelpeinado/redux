@@ -1,11 +1,11 @@
 
 class Score extends React.Component {
 	constructor(props) {
-		// Se está sendo usado o extends de um classe base, nesse caso o React.Component, antes que possar chamar 'this.'
+		// Se está sendo usado o extends de um classe base, nesse caso o React.Component, antes que possa chamar 'this.'
 		// em um construtor é necessário chamar a super classe antes.
 
 		// super chama o construtor pai, nesse caso, o pai é React.Component
-		// assim que deixa o constutor disponível na classe derivada, nesse caso, na classe filha.
+		// assim que deixa o construtor disponível na classe derivada, nesse caso, na classe filha.
 		super(props);
 		this.state = { score: 0 };
 

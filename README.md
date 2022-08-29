@@ -84,7 +84,7 @@ Isso garante que heranças sejam mais simples de serem gerenciadas.
 **React Component**
 class Simples extends React.Component {
     render() {
-        return <h1>Hello, World</h1>; (isso se chama JSX)
+        return <'h1'>Hello, World<'/h1'>; (isso se chama JSX)
     }
 }
 
@@ -98,3 +98,47 @@ O JSX é compilado para um JavaScript válido
 
 ### React e Webpack
 Webpack é um módulo que combina os arquivos. Então, ao invés de ter seis ou mais tags de script, existe um pacote.
+
+## The Problem with State
+### State Problems
+"start": "concurrently \"npm run server\" \"npm run webpack\" " = executará simultaneamente o comando server, ou seja, o aplicativo node ./server/app.js e o comando webpack, webpack -w.
+
+ao invés de usar:
+- var conversionRate = this.props.conversionRate
+- var fee = this.props.fee
+
+melhor usar:
+var { conversionRate, fee } = this.props
+
+Isso é chamado de desestruturação do ES6
+
+
+.bind retorna uma nova função a cada vez que é chamado
+
+### Should You Use Redux?
+#### Without Redux
+* Comunicação de vários states
+* Erros de states e cenários complexos
+* Muitas chamadas Ajax
+* Muito confuso
+
+#### With Redux
+* Fluxos de dados mais claros
+* State é previsível
+
+#### With React (no Redux)
+* Ainda falta de insight e falta de clareza ou transparência
+* Fluxo de dados não escala bem
+* Ainda muito confuso
+
+#### Evaluating New Technology
+O ideal seria
+* **Qual o problema:** Tenho um problema de states
+* **Possível solução:** Talvez Redux pode resolver meu problema
+* **Pequena Experiência:** Criar um projeto em paralelo utilizando Redux
+* **Grande Experiência:** Introduzir a solução no projeto principal ao poucos 
+* **Evolução:** Está funcionando?
+* **Decisão:** Usar mais Redux ou repetir processo
+
+**Obs.:** O criador do Redux, Dan Abramov, escreveu um artigo **You Might Not Need Redux**, onde ele expõe razões a favor e contra o uso do Redux.
+
