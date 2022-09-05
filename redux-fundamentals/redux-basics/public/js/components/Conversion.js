@@ -1,63 +1,9 @@
 import React from 'react';
-import { createStore } from 'redux';
 import PropTypes from 'prop-types'
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-var defaultState = {
-    originAmount: '0.00'  
-};
-
-// variável reducer
-// no ES6 state = defaultState é o mesmo que state = state || defaultState;
-// obs: quando criamos o store, ele chama o dispatch uma vez, por isso estava retornando 2, por isso +
-// foi preciso definir type, para ele incrementar só quando o type INCREMENT for chamado
-function amount(state = defaultState, action) {
-    // state = state || defaultState;
-
-    if (action.type === 'CHANGE_ORIGIN_AMOUNT'){
-        // estamos quebrando uma das principais e mais difíceis regras do redux, que é não podemos
-        // alterar o state. Só podemos fazer atualizações imutáveis, pois quando alteramos o objeto
-        // diretamente, perdemos todo o histórico de atualizações do estado, e o redux usa o histórico
-        // para fazer comparações para ver se o STATE mudou.
-        // state.originAmount = action.data; então:
-
-        // podemos usar outra sintaxe para esse retorno
-        // return Object.assign({}, state, { originAmount: action.data }); então:
-
-        // ... é chamado de Operador de Propagação de Objeto (Object Spread)
-        // ... copia e espelha todo o objeto e ainda atualiza com o novo action.data
-        // ... é equivalente a Object.assign({}, state, { originAmount: action.data });
-        return {
-            ...state,
-            originAmount: action.data
-        }
-    }
-    return state;
-
-    // return action.type === 'CHANGE_ORIGIN_AMOUNT' ? Object.assign({}, state, { originAmount: action.data }) : state;
-}
-
-// com o STORE queremos ou atualizar ou definir o STATE
-var store = createStore(amount);
-
-// podemos usar subscribe nas atualizações do store
-store.subscribe(function() {
-    console.log('state', store.getState());
-});
-
-// REDUCER é um conjunto que é executado toda vez que uma ação é disparado no STORE
-
-// a forma de atualizar um reducer daquele store é usando um dispatch, que dispara uma ação
-// e essa ação dever ser um objeto
-store.dispatch({
-    type: 'CHANGE_ORIGIN_AMOUNT',
-    data: '300.65'
-});
-
-store.dispatch({
-    type: ''
-});
+import store from '../store/configureStore';
 
 class FeesTable extends React.Component {
     render() {
@@ -97,7 +43,7 @@ class Conversion extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            originAmount: '0.00',
+            // originAmount: '0.00',
             originCurrency: 'USD',
             destinationAmount: '0.00',
             destinationCurrency: 'EUR',
@@ -193,7 +139,8 @@ class Conversion extends React.Component {
         newAmount = newAmount.replace(',','')
 
         // optimistic field updates
-        this.setState({originAmount: newAmount});
+        store.dispatch({ type: 'CHANGE_ORIGIN_AMOUNT', data: { newAmount: newAmount } });
+        // this.setState({originAmount: newAmount});
 
         // get the new dest amount
         this.makeConversionAjaxCall({
@@ -268,7 +215,7 @@ class Conversion extends React.Component {
         var destCurrency = this.state.destinationCurrency;
 
         var payload = {
-            originAmount: data.newValue || this.state.originAmount,
+            originAmount: data.newValue || this.props.originAmount,
             destAmount: data.newValue || this.state.destAmount,
             originCurrency: originCurrency,
             destCurrency: destCurrency,
@@ -302,11 +249,13 @@ class Conversion extends React.Component {
         .catch(failureCallback);
     }
     calcNewTotal() {
-        var newTotal = parseFloat(this.state.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
+        var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
         this.setState({ totalCost: parseFloat(newTotal) });
     }
 
     render() {
+        console.log('this.props.originAmount', this.props.originAmount);
+
         if (this.state.errorMsg) {
             var errorMsg = <div className="errorMsg">{this.state.errorMsg}</div>
         }
@@ -316,7 +265,7 @@ class Conversion extends React.Component {
             <div>
                 {errorMsg}
                 <label>Convert</label>&nbsp;
-                <input className="amount-field" ref={input => this.originAmountInput = input} onChange={this.handleOriginAmountChange} value={this.state.originAmount} />
+                <input className="amount-field" ref={input => this.originAmountInput = input} onChange={this.handleOriginAmountChange} value={this.props.originAmount} />
                 <select value={this.state.originCurrency} onChange={this.handleOriginCurrencyChange}>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
