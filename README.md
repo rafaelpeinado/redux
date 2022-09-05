@@ -145,11 +145,20 @@ O ideal seria
 
 ## Redux Basics
 ### Redux Building Blocks
+
 * Instala o Redux com --save-dev, porque não é necessário carregar o biblioteca do redux em produção.
 * com o STORE queremos ou atualizar ou definir o STATE
 Obs.: verificar a documentação do Babel, pois lá tem um comitê chamado TC39 que trata das atualizações do JS.
 
 ### React-redux
+
 O método de **connect** tem várias melhoras de desempenho
+
+
+
+
+## Asynchronous Actions
+
+
 
 
