@@ -245,11 +245,11 @@ class Conversion extends React.Component {
 
 export default connect((state, props) => {
     return {
-        originAmount: state.originAmount,
-        destinationAmount: state.destinationAmount,
-        conversionRate: state.conversionRate,
-        feeAmount: state.feeAmount,
-        totalCost: state.totalCost
+        originAmount: state.amount.originAmount,
+        destinationAmount: state.amount.destinationAmount,
+        conversionRate: state.amount.conversionRate,
+        feeAmount: state.amount.feeAmount,
+        totalCost: state.amount.totalCost
     }
 
 })(Conversion);
