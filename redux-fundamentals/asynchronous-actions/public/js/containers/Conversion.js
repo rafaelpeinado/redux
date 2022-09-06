@@ -11,10 +11,10 @@ class Conversion extends React.Component {
         this.state = {
             // originAmount: '0.00',
             originCurrency: 'USD',
-            destinationAmount: '0.00',
+            // destinationAmount: '0.00',
             destinationCurrency: 'EUR',
             feeAmount: 0.00,
-            conversionRate: 1.5,
+            // conversionRate: 1.5,
             totalCost: 0.00,
             errorMsg: ''
         }
@@ -74,7 +74,7 @@ class Conversion extends React.Component {
                 this.setState({
                     originAmount: resp.originAmount,
                     // destinationAmount: resp.destAmount,
-                    destinationAmount: this.state.destinationAmount,
+                    destinationAmount: this.props.destinationAmount,
                     conversionRate: resp.xRate
                 });
 
@@ -102,25 +102,49 @@ class Conversion extends React.Component {
         var newAmount = event.target.value;
 
         // remove unallowed chars
-        newAmount = newAmount.replace(',','')
+        newAmount = newAmount.replace(',', '')
 
         // optimistic field updates
-        this.props.dispatch({type:"CHANGE_ORIGIN_AMOUNT", data:{newAmount: newAmount} });
+        this.props.dispatch({ type: "CHANGE_ORIGIN_AMOUNT", data: { newAmount: newAmount } });
+
+        // Como o redux-thunk foi inserido, podemos passar uma função para dispatch. Quando o dispatch é chamado 
+        // com uma função, ele é executado e em seguida o Redux destrói e ignora a função. Essa função por si 
+        // só não chama o reducer e isso não afeta o estado do Redux.
+        // this.props.dispatch(function(dispatch) {
+        //     dispatch({ type: 'SOME_ACTION', data: 'someData' });
+        // 
+        //     setTimeout(function() {
+        //         dispatch({ type: 'CHANGE_ORIGIN_AMOUNT', data: { newAmount: '5000' } });
+        //     }, 3000);
+        // });
+
         // this.setState({originAmount: newAmount});
 
-        // get the new dest amount
-        this.makeConversionAjaxCall({
-            currentlyEditing: 'origin',
-            newValue: newAmount
+        // isso funcionoaria, mas não teríamos o state antes da action
+        // this.props.dispatch({ type: 'MakingConversionCall' });
 
-        }, (resp) => {
-            this.clearErrorMessage();
+        this.props.dispatch((dispatch) => {
+            // Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solicitação e quando recebe a resposta
+            // então faz sentido ter uma action de solicitação e uma de resposta recebida
 
-            this.setState({
-                conversionRate: resp.xRate,
-                destinationAmount: resp.destAmount
-            })
-        }, this.handleAjaxFailure);
+            dispatch({ type: 'REQUEST_CONVERSION_RATE', data: payload })
+
+            var payload = {
+                currentlyEditing: 'origin',
+                newValue: newAmount
+            };
+
+            // get the new dest amount
+            this.makeConversionAjaxCall(payload, (resp) => {
+                this.clearErrorMessage();
+                // this.props.dispatch({ type: 'MadeConversionCall' });
+                dispatch({ type: 'RECEIVE_CONVERSION_RATE', data: resp });
+                // this.setState({
+                //     conversionRate: resp.xRate,
+                //     destinationAmount: resp.destAmount
+                // })
+            }, this.handleAjaxFailure);
+        });
 
         // get the new fee & total amount
         this.makeFeeAjaxCall({
@@ -142,9 +166,9 @@ class Conversion extends React.Component {
         var newAmount = event.target.value;
 
         // remove unallowed chars
-        newAmount = newAmount.replace(',','')
+        newAmount = newAmount.replace(',', '')
         // optimistic update
-        this.setState({destinationAmount: newAmount})
+        this.setState({ destinationAmount: newAmount })
 
         this.makeConversionAjaxCall({
             currentlyEditing: 'dest',
@@ -198,10 +222,10 @@ class Conversion extends React.Component {
         axios.get('/api/conversion', {
             params: payload
         })
-        .then((resp) => {
-            successCallback(resp.data);
-        })
-        .catch(failureCallback);
+            .then((resp) => {
+                successCallback(resp.data);
+            })
+            .catch(failureCallback);
 
     }
     // this is debounced in `componentDidMount()`
@@ -209,10 +233,10 @@ class Conversion extends React.Component {
         axios.get('/api/fees', {
             params: payload
         })
-        .then((resp) => {
-            successCallback(resp.data);
-        })
-        .catch(failureCallback);
+            .then((resp) => {
+                successCallback(resp.data);
+            })
+            .catch(failureCallback);
     }
     calcNewTotal() {
         var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
@@ -234,7 +258,7 @@ class Conversion extends React.Component {
                     <option value="EUR">EUR</option>
                     <option value="JPY">JPY</option>
                 </select>
-                to <input className="amount-field" onChange={this.handleDestAmountChange} value={this.state.destinationAmount} />&nbsp;
+                to <input className="amount-field" onChange={this.handleDestAmountChange} value={this.props.destinationAmount} />&nbsp;
                 <select value={this.state.destinationCurrency} onChange={this.handleDestCurrencyChange}>
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
@@ -242,11 +266,11 @@ class Conversion extends React.Component {
                 </select>
 
 
-                <br/><br/><br/>
+                <br /><br /><br />
                 <FeesTable
                     originCurrency={this.state.originCurrency}
                     destinationCurrency={this.state.destinationCurrency}
-                    conversionRate={this.state.conversionRate}
+                    conversionRate={this.props.conversionRate}
                     fee={this.state.feeAmount}
                     total={this.state.totalCost}
                 />
@@ -257,7 +281,8 @@ class Conversion extends React.Component {
 
 export default connect((state, props) => {
     return {
-        originAmount: state.originAmount
-    }
-
+        originAmount: state.originAmount,
+        destinationAmount: state.destinationAmount,
+        conversionRate: state.conversionRate
+    };
 })(Conversion);
