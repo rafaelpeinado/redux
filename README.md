@@ -158,7 +158,30 @@ O método de **connect** tem várias melhoras de desempenho
 
 
 ## Asynchronous Actions
+### Middleware
+* instalar npm i --save-dev redux-logger
+* isso imprime no console o state anterior, a action com o type e o data, e oo próximo state que é a nova atualização
+* o states só podem ser alterados por uma ação
+* [Documentação do Redux Logger](https://npm.io/package/redux-logger "Redux Logger") 
 
+
+### Async Actions
+Quando chamamos o dispatch, ele chama uma função reducer que foi definida pelo método createStore. Passamos dois parâmetros no dispatch:
+* O primeiro é o state atual, antes que a action seja aplicada
+* O segundo é a ação, ou seja, o objeto que estamos passando para o dispatch
+
+**redux-thunk** é um middleware que nos permite actions assíncronas. 
+Como o redux-thunk foi inserido, podemos passar uma função para dispatch. Quando o dispatch é chamado com uma função, ele é executado e em seguida o Redux destrói e ignora a função. Essa função por si só não chama o reducer e isso não afeta o estado do Redux.
+Podemos usar essa função para fazer um trabalho assíncrono e, em seguida, chamar o dispatch com o resultado.
+Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solicitaçã oe quando recebe a resposta
+
+
+### Actions Creators
+É necessário fazer **debounce**, pois quando são retornados 3 chamadas asíncronas do Ajax há dois problemas:
+* primeiro que estamos fazendo chamadas desnecessárias e deserperdiçando recurso
+* segundo que a ordem das chamadas asíncronas podem chegar diferentes do resultado que esperávamos, por exemplo, posso estar esperando a última chamada, mas a primeira chamada chegar por último e ser apresentado na interface.
+
+O **Reducer** dever ser puro, ou seja, não pdoe haver chamadas com efeitos colaterais. Nenhuma chamada Ajax, nenhuma variável que não seja explicitamente passada.
 
 
 
