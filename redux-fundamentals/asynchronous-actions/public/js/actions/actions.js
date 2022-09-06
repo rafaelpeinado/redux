@@ -1,9 +1,11 @@
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
+import { ActionTypes as types } from '../constants';
+
 export function changeOriginAmount(newAmount) {
     return {
-        type: 'CHANGE_ORIGIN_AMOUNT',
+        type: types.CHANGE_ORIGIN_AMOUNT,
         data: { newAmount: newAmount }
     };
 }
@@ -19,7 +21,7 @@ function _makeConversionAjaxCall(payload, dispatch) {
     // Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solicitação e quando recebe a resposta
     // então faz sentido ter uma action de solicitação e uma de resposta recebida
 
-    dispatch({ type: 'REQUEST_CONVERSION_RATE', data: payload })
+    dispatch({ type: types.REQUEST_CONVERSION_RATE, data: payload })
 
     /*var payload = {
         currentlyEditing: 'origin',
@@ -34,11 +36,11 @@ function _makeConversionAjaxCall(payload, dispatch) {
     })
         .then((resp) => {
             // successCallback(resp.data);
-            dispatch({ type: 'RECEIVE_CONVERSION_RATE_SUCCESS', data: resp.data });
+            dispatch({ type: types.RECEIVED_CONVERSION_RATE_SUCCESS, data: resp.data });
         })
         //.catch(failureCallback);
         .catch((err) => {
-            dispatch({ type: 'RECEIVE_CONVERSION_RATE_FAILURE', data: err });
+            dispatch({ type: types.RECEIVED_CONVERSION_RATE_FAILURE, data: err });
         });
 
     /*// get the new dest amount
@@ -64,16 +66,16 @@ export function fetchFees(payload) {
 }
 
 function _makeFeeAjaxCall(payload, dispatch) {
-    dispatch({ type: 'REQUEST_FEES', data: payload })
+    dispatch({ type: types.REQUEST_FEES, data: payload })
 
     axios.get('/api/fees', {
         params: payload
     })
         .then((resp) => {
-            dispatch({ type: 'RECEIVE_FEES_SUCCESS', data: resp.data });
+            dispatch({ type: types.RECEIVED_FEES_SUCCESS, data: resp.data });
         })
         .catch((err) => {
-            dispatch({ type: 'RECEIVE_FEES_FAILURE', data: err });
+            dispatch({ type: types.RECEIVED_FEES_FAILURE, data: err });
         });
 }
 
