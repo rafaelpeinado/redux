@@ -4,6 +4,8 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 
 import FeesTable from '../components/FeesTable';
+// * significa que importará todas as exportações do actions.js
+import * as actions from '../actions/actions';
 
 class Conversion extends React.Component {
     constructor(props) {
@@ -105,7 +107,8 @@ class Conversion extends React.Component {
         newAmount = newAmount.replace(',', '')
 
         // optimistic field updates
-        this.props.dispatch({ type: "CHANGE_ORIGIN_AMOUNT", data: { newAmount: newAmount } });
+        // this.props.dispatch({ type: "CHANGE_ORIGIN_AMOUNT", data: { newAmount: newAmount } });
+        this.props.dispatch(actions.changeOriginAmount(newAmount));
 
         // Como o redux-thunk foi inserido, podemos passar uma função para dispatch. Quando o dispatch é chamado 
         // com uma função, ele é executado e em seguida o Redux destrói e ignora a função. Essa função por si 
@@ -123,44 +126,57 @@ class Conversion extends React.Component {
         // isso funcionoaria, mas não teríamos o state antes da action
         // this.props.dispatch({ type: 'MakingConversionCall' });
 
-        this.props.dispatch((dispatch) => {
-            // Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solicitação e quando recebe a resposta
-            // então faz sentido ter uma action de solicitação e uma de resposta recebida
+        //_makeConversionAjaxCall(data, successCallback, failureCallback) {
+        var originCurrency = this.state.originCurrency;
+        var destCurrency = this.state.destinationCurrency;
 
-            dispatch({ type: 'REQUEST_CONVERSION_RATE', data: payload })
+        var payload = {
+            originAmount: newAmount,
+            // destAmount: data.newValue || this.state.destAmount,
+            originCurrency: this.state.originCurrency,
+            // destCurrency: this.state.destCurrency,
+            destCurrency: this.state.destinationCurrency,
+            calcOriginAmount: false
+        }
 
-            var payload = {
-                currentlyEditing: 'origin',
-                newValue: newAmount
-            };
+        /*// determine whether we need to calc origin or dest amount
+        if (data.currentlyEditing === 'dest') {
+            payload.calcOriginAmount = true
+        }*/
+        //}
 
-            // get the new dest amount
-            this.makeConversionAjaxCall(payload, (resp) => {
-                this.clearErrorMessage();
-                // this.props.dispatch({ type: 'MadeConversionCall' });
-                dispatch({ type: 'RECEIVE_CONVERSION_RATE', data: resp });
-                // this.setState({
-                //     conversionRate: resp.xRate,
-                //     destinationAmount: resp.destAmount
-                // })
-            }, this.handleAjaxFailure);
-        });
+        this.props.dispatch(actions.fetchConversionRate(payload));
 
-        // get the new fee & total amount
-        this.makeFeeAjaxCall({
+        // this.props.dispatch((dispatch) => {
+        //     // Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solicitação e quando recebe a resposta
+        //     // então faz sentido ter uma action de solicitação e uma de resposta recebida
+
+        //     dispatch({ type: 'REQUEST_CONVERSION_RATE', data: payload })
+
+        //     var payload = {
+        //         currentlyEditing: 'origin',
+        //         newValue: newAmount
+        //     };
+
+        //     // get the new dest amount
+        //     this.makeConversionAjaxCall(payload, (resp) => {
+        //         this.clearErrorMessage();
+        //         // this.props.dispatch({ type: 'MadeConversionCall' });
+        //         dispatch({ type: 'RECEIVE_CONVERSION_RATE', data: resp });
+        //         // this.setState({
+        //         //     conversionRate: resp.xRate,
+        //         //     destinationAmount: resp.destAmount
+        //         // })
+        //     }, this.handleAjaxFailure);
+        // });
+
+        var feePayload = {
             originAmount: newAmount,
             originCurrency: this.state.originCurrency,
             destCurrency: this.state.destinationCurrency
+        };
 
-        }, (resp) => {
-            this.setState({
-                feeAmount: resp.feeAmount
-            })
-
-            this.calcNewTotal();
-        });
-
-
+        this.props.dispatch(actions.fetchFees(feePayload));
     }
     handleDestAmountChange(event) {
         var newAmount = event.target.value;
@@ -239,7 +255,7 @@ class Conversion extends React.Component {
             .catch(failureCallback);
     }
     calcNewTotal() {
-        var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.state.feeAmount, 10);
+        var newTotal = parseFloat(this.props.originAmount, 10) + parseFloat(this.props.feeAmount, 10);
         this.setState({ totalCost: parseFloat(newTotal) });
     }
 
@@ -271,8 +287,8 @@ class Conversion extends React.Component {
                     originCurrency={this.state.originCurrency}
                     destinationCurrency={this.state.destinationCurrency}
                     conversionRate={this.props.conversionRate}
-                    fee={this.state.feeAmount}
-                    total={this.state.totalCost}
+                    fee={this.props.feeAmount}
+                    total={this.props.totalCost}
                 />
             </div>
         )
@@ -283,6 +299,8 @@ export default connect((state, props) => {
     return {
         originAmount: state.originAmount,
         destinationAmount: state.destinationAmount,
-        conversionRate: state.conversionRate
+        conversionRate: state.conversionRate,
+        feeAmount: state.feeAmount,
+        totalCost: state.totalCost
     };
 })(Conversion);
