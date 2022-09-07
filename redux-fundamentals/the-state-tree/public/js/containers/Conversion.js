@@ -14,10 +14,10 @@ class Conversion extends React.Component {
             // originCurrency: 'USD',
             // destinationAmount: '0.00',
             // destinationCurrency: 'EUR',
-            feeAmount: 0.00,
+            // feeAmount: 0.00,
             // conversionRate: 1.5,
-            totalCost: 0.00,
-            errorMsg: ''
+            // totalCost: 0.00,
+            // errorMsg: ''
         }
 
         // bind event listeners so 'this' will be available in the handlers
@@ -27,7 +27,7 @@ class Conversion extends React.Component {
         // classe esteja disponível na palavra-chave this quando o evento React chama esse método
         this.handleOriginCurrencyChange = this.handleOriginCurrencyChange.bind(this);
         this.handleDestCurrencyChange = this.handleDestCurrencyChange.bind(this);
-        this.handleAjaxFailure = this.handleAjaxFailure.bind(this);
+        // this.handleAjaxFailure = this.handleAjaxFailure.bind(this);
     }
 
     componentDidMount() {
@@ -37,26 +37,6 @@ class Conversion extends React.Component {
         this.makeFeeAjaxCall = debounce(this._makeFeeAjaxCall, 350);
 
         this.originAmountInput.focus();
-    }
-    // we'll handle all failures the same
-    handleAjaxFailure(resp) {
-        var msg = 'Error. Please try again later.'
-
-        if (resp && resp.request && resp.request.status === 0) {
-            msg = 'Oh no! App appears to be offline.'
-        }
-
-        this.setState({
-            errorMsg: msg
-        })
-    }
-    // on success ensure no error message
-    clearErrorMessage() {
-        if (this.state.errorMsg) {
-            this.setState({
-                errorMsg: ''
-            })
-        }
     }
 
     handleOriginCurrencyChange(event) {
@@ -291,8 +271,8 @@ class Conversion extends React.Component {
     }
 
     render() {
-        if (this.state.errorMsg) {
-            var errorMsg = <div className="errorMsg">{this.state.errorMsg}</div>
+        if (this.props.errorMsg) {
+            var errorMsg = <div className="errorMsg">{this.props.errorMsg}</div>
         }
 
         return (
@@ -334,7 +314,8 @@ export default connect((state, props) => {
         destinationCurrency: state.amount.destinationCurrency,
         conversionRate: state.amount.conversionRate,
         feeAmount: state.amount.feeAmount,
-        totalCost: state.amount.totalCost
+        totalCost: state.amount.totalCost,
+        errorMsg: state.error.errorMsg
     }
 
 })(Conversion);

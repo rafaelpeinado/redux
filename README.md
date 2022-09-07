@@ -189,3 +189,13 @@ O **Reducer** dever ser puro, ou seja, não pdoe haver chamadas com efeitos cola
 Esperávamos que o **originAmount** mudasse após a **action RECEIVED_CONVERSION_RATE_SUCCESS** ser acionada. Então é necessário inspecioná-la. No vídeo, podemos ver que o novo **originAmount** é de **US$ 212.77**, mas mesmo assim não está refletindo na interface de usuário.
 No **next state** , o **originAmount** está 300. Então, apesar de que o payload tenha voltado 212.77, o state do Redux permanece em 300.
 
+### Multiple Reducers
+Temos permissão para ouvir a mesma **action** em vários **reducers**, pois uma vez que o **dispatch** chama todos os **reducers**, podemos ter vários **reducers** escutando a mesma **action**.
+
+A sugestão de divisão dos **reducers** é tentar organizá-los por domínio e não apenas aos recursos de interface do usuários, pois eles podem mudar com frequência e pode ser muito trabalhoso ter que alterar a estrutura do **reducer** com frequência.
+
+No caso do curso, sempre teremos erros na interface do usuário, por isso é seguro ter um **reducer** de erros. E também sempre teremos um recurso de quantia onde pode alterr quantia ou um recurso de transação. Ou seja, são domínios bastante seguros, pois isso não vai mudar. 
+
+Sendo assim, mesmo se a interface do usuário mudar, certas propriedades podem mudar, mas o domínio não.
+
+
