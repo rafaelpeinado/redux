@@ -13,34 +13,34 @@ var defaultState = {
 
 function amount(state = defaultState, action) {
     switch (action.type) {
-        case ('CHANGE_ORIGIN_AMOUNT'):
+        case (types.CHANGE_ORIGIN_AMOUNT):
             return {
                 ...state,
                 originAmount: action.data.newAmount
             }
-        case ('CHANGE_DESTINATION_AMOUNT'):
+        case (types.CHANGE_DESTINATION_AMOUNT):
             return {
                 ...state,
                 destinationAmount: action.data.newAmount
             }
-        case ('CHANGE_ORIGIN_CURRENCY'):
+        case (types.CHANGE_ORIGIN_CURRENCY):
             return {
                 ...state,
                 originCurrency: action.data.newCurrency
             }
-        case ('CHANGE_DESTINATION_CURRENCY'):
+        case (types.CHANGE_DESTINATION_CURRENCY):
             return {
                 ...state,
                 destinationCurrency: action.data.newCurrency
             }
-        case ('RECEIVED_CONVERSION_RATE_SUCCESS'):
+        case (types.RECEIVED_CONVERSION_RATE_SUCCESS):
             return {
                 ...state,
                 conversionRate: action.data.xRate,
                 originAmount: action.data.originAmount,
                 destinationAmount: action.data.destAmount
             }
-        case ('RECEIVED_FEES_SUCCESS'):
+        case (types.RECEIVED_FEES_SUCCESS):
             var newFeeAmount = action.data.feeAmount;
             var newTotal = parseFloat(state.originAmount, 10) + parseFloat(newFeeAmount, 10);
 
