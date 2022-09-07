@@ -184,4 +184,8 @@ Há dois momentos importantes quando faz um chamada **AJAX**: quando faz a solic
 O **Reducer** dever ser puro, ou seja, não pdoe haver chamadas com efeitos colaterais. Nenhuma chamada Ajax, nenhuma variável que não seja explicitamente passada.
 
 
+## The State Tree
+### Serial Ajax Calls
+Esperávamos que o **originAmount** mudasse após a **action RECEIVED_CONVERSION_RATE_SUCCESS** ser acionada. Então é necessário inspecioná-la. No vídeo, podemos ver que o novo **originAmount** é de **US$ 212.77**, mas mesmo assim não está refletindo na interface de usuário.
+No **next state** , o **originAmount** está 300. Então, apesar de que o payload tenha voltado 212.77, o state do Redux permanece em 300.
 

@@ -173,43 +173,79 @@ class Conversion extends React.Component {
         this.props.dispatch(actions.fetchFees(feePayload));
 
     }
+
     handleDestAmountChange(event) {
         var newAmount = event.target.value;
 
         // remove unallowed chars
         newAmount = newAmount.replace(',','')
-        // optimistic update
-        this.setState({destinationAmount: newAmount})
 
-        this.makeConversionAjaxCall({
-            currentlyEditing: 'dest',
-            newValue: newAmount
+        // optimistic field updates
+        this.props.dispatch(actions.changeDestAmount(newAmount));
 
-        }, (resp) => {
-            // make ajax call to get the fee amount..
-            var newState = {
-                conversionRate: resp.xRate,
-                originAmount: resp.originAmount
-            }
+        var payload = {
+            destAmount: newAmount,
+            originCurrency: this.props.originCurrency,
+            destCurrency: this.props.destinationCurrency,
+            // esse parâmetro indica para a API que não conhecemos o originAmount e queremos calcular a partir do 
+            // destinationAmount
+            calcOriginAmount: true
+        }
 
-            this.setState(newState)
+        // As duas chamadas fetchConversionRate e fetchFees são chamadas em paralelo. Assim que o primeiro dispatch ocorre,
+        // o segundo dispatch acontece logo em seguida. Precisamos esperar que o primeiro volte, para que a possamos usar
+        // o originAmount que é retornado na primeira chamada da API.
+       /* this.props.dispatch(actions.fetchConversionRate(payload));
 
-            // get the new fee & total amount
-            this.makeFeeAjaxCall({
-                originAmount: resp.originAmount,
-                originCurrency: this.props.originCurrency,
-                destCurrency: this.props.destinationCurrency
+        var feePayload = {
+            originAmount: newAmount,
+            originCurrency: this.props.originCurrency,
+            destCurrency: this.props.destinationCurrency
+        }
 
-            }, (resp) => {
-                this.setState({
-                    feeAmount: resp.feeAmount
-                })
+        this.props.dispatch(actions.fetchFees(feePayload));*/
 
-                this.calcNewTotal();
-            }, this.handleAjaxFailure);
-        })
-
+        // aqui faremos as duas chamadas dentro do reducer
+        this.props.dispatch(actions.fetchConversionRateAndFees(payload));
     }
+
+    // handleDestAmountChange(event) {
+    //     var newAmount = event.target.value;
+
+    //     // remove unallowed chars
+    //     newAmount = newAmount.replace(',','')
+    //     // optimistic update
+    //     this.setState({destinationAmount: newAmount})
+
+    //     this.makeConversionAjaxCall({
+    //         currentlyEditing: 'dest',
+    //         newValue: newAmount
+
+    //     }, (resp) => {
+    //         // make ajax call to get the fee amount..
+    //         var newState = {
+    //             conversionRate: resp.xRate,
+    //             originAmount: resp.originAmount
+    //         }
+
+    //         this.setState(newState)
+
+    //         // get the new fee & total amount
+    //         this.makeFeeAjaxCall({
+    //             originAmount: resp.originAmount,
+    //             originCurrency: this.props.originCurrency,
+    //             destCurrency: this.props.destinationCurrency
+
+    //         }, (resp) => {
+    //             this.setState({
+    //                 feeAmount: resp.feeAmount
+    //             })
+
+    //             this.calcNewTotal();
+    //         }, this.handleAjaxFailure);
+    //     })
+
+    // }
     // this is debounced in `componentDidMount()` as this.makeConversionAjaxCall()
     _makeConversionAjaxCall(data, successCallback, failureCallback) {
         var originCurrency = this.props.originCurrency;

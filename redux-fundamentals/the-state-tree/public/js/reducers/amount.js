@@ -18,6 +18,11 @@ function amount(state = defaultState, action) {
                 ...state,
                 originAmount: action.data.newAmount
             }
+        case ('CHANGE_DESTINATION_AMOUNT'):
+            return {
+                ...state,
+                destinationAmount: action.data.newAmount
+            }
         case ('CHANGE_ORIGIN_CURRENCY'):
             return {
                 ...state,
@@ -32,6 +37,7 @@ function amount(state = defaultState, action) {
             return {
                 ...state,
                 conversionRate: action.data.xRate,
+                originAmount: action.data.originAmount,
                 destinationAmount: action.data.destAmount
             }
         case ('RECEIVED_FEES_SUCCESS'):
