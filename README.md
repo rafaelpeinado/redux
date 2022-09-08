@@ -199,3 +199,11 @@ No caso do curso, sempre teremos erros na interface do usuário, por isso é seg
 Sendo assim, mesmo se a interface do usuário mudar, certas propriedades podem mudar, mas o domínio não.
 
 
+
+## Redux Internals
+### Writing combineReducers()
+A função combineReducers retorna uma função que chamará o reducer de apple e atribui o resultado disso à propriedade apple.
+Em seguida, chama o reducer de orange e, em seguida, atribui o resultado disso à propriedade orange.
+Ou seja, o combineReducers retorna uma função que percorre cada uma das propriedades, chama o reducer associado e, em seguida, salva o state resultante dessa chamada na propriedade à qual está atribuída.
+
+

@@ -9,7 +9,22 @@ function apple(state = defaultAppleState, action) {
   return state;
 }
 
-var store = createStore(apple);
+var defaultOrangeState = 10;
+
+function orange(state = defaultOrangeState, action) {
+  if (action.type === 'EAT_ORANGE') {
+    return state - 1;
+  }
+
+  return state;
+}
+
+var rootReducer = combineReducers({
+  apple: apple,
+  orange: orange
+});
+
+var store = createStore(rootReducer);
 
 var unsub = store.subscribe(function() {
   console.log('STATE UPDATED', store.getState());
@@ -61,5 +76,22 @@ function createStore(reducer) {
   obj.dispatch({ type: 'REDUX_INIT' });
   return obj;
 }
+
+function combineReducers(stateTree) {
+  var keys = Object.keys(stateTree);
+
+  return function rootReducer(state = {}, action) {
+    for (var i=0; i < keys.length; i++) {
+      var key = keys[i];
+      var reducer = stateTree[key];
+      var subState = state[key];
+
+      state[key] = reducer(subState, action);
+    }
+    return state;
+  }
+}
+
+
 
 
