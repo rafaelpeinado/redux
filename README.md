@@ -207,3 +207,16 @@ Em seguida, chama o reducer de orange e, em seguida, atribui o resultado disso �
 Ou seja, o combineReducers retorna uma função que percorre cada uma das propriedades, chama o reducer associado e, em seguida, salva o state resultante dessa chamada na propriedade à qual está atribuída.
 
 
+## Redux Across Frameworks
+### Vue.js with Redux
+Para o Redux, nós temos que pensar principalmente em duas coisas, como obter os dados do Redux e como configurá-los.
+
+Temos três passos: 
+* Estado inicial, ou seja, quando o componente é carregado
+* Fazer atualizações no armazenamento com base nas ações desse componente com base nas ações da interface do usuário do componente.
+* Precisamos refletir essas alterações de estado de volta à interface do usuário
+
+**Redux e Vue** têm diferenças fundamentais em como eles lidam com atualizações de estado. No Redux, toda vez que o estado é atualizado, eliminamos todo o estado e retornamos uma cópia nova em folha de todo o estado. No Vue, o objeto de estado pai permanece o mesmo, e o Vue escuta para ver se alguma das propriedades filho desse objeto é alterada. É assim que Vue ouve as atualizações de estado. Se você eliminar o objeto pai, então você está eliminando todos esses ouvintes. Portanto, precisamos atualizar esse código para que o objeto pai que passamos para a propriedade de dados "data: reduxState" no arquivo main.js não seja alterado.
+
+**Vuex** é um padrão e biblioteca de gerenciamento de estado. Inspirado por Flux, Redux e Elm. Ou seja, a melhor sugestão para usar no Vue é o Vuex.
+

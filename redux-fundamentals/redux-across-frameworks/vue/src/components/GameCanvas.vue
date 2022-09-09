@@ -3,7 +3,7 @@
     <button class="clearButton" @click="handleRestart">Clear</button>
 
     <div class="fieldContainer">
-      <template v-for="(field, index) in fields">
+      <template v-for="(field, index) in this.$root.$data.fields">
         <template v-if="field === false">
           <div @click="handlePlay(index)" class="field empty">&nbsp;</div>
         </template>
@@ -17,36 +17,42 @@
 </template>
 
 <script>
+import store from '../reduxState.js';
+
 export default {
   name: 'GameCanvas',
-  data () {
-    return {
-      msg: 'Tic Tac Toe',
-      fields: Array(9).fill(false),
-      player1: "x",
-      player2: "o",
-      currentPlayer: 1
-    }
-  },
+  // data () {
+  //   return {
+  //     msg: 'Tic Tac Toe',
+  //     fields: Array(9).fill(false),
+  //     player1: "x",
+  //     player2: "o",
+  //     currentPlayer: 1
+  //   }
+  // },
   methods: {
-    handlePlay: function(index) {
+    handlePlay: function (index) {
 
-      // clone fields so vue knows when update occurs
-      var fields = this.fields.slice();
-      var piece = this['player' + this.currentPlayer]; //x or o
+      // // clone fields so vue knows when update occurs
+      // var fields = this.fields.slice();
+      // var piece = this['player' + this.currentPlayer]; //x or o
 
-      fields[index] = piece;
+      // fields[index] = piece;
 
-      // fill in the current piece, and switch player
-      this.fields = fields;
-      this.currentPlayer = this.currentPlayer === 1 ? 2 : 1; // toggle between player  1 and 2
+      // // fill in the current piece, and switch player
+      // this.fields = fields;
+      // this.currentPlayer = this.currentPlayer === 1 ? 2 : 1; // toggle between player  1 and 2
+
+      store.dispatch({ type: 'MARK_FIELD', data: { fieldIndex: index } });
     },
-    handleRestart: function(event) {
-      this.fields = Array(9).fill(false); // start with array of 9 with false filled in
+    handleRestart: function (event) {
+      // this.fields = Array(9).fill(false); // start with array of 9 with false filled in
+
+      store.dispatch({ type: 'RESET_FIELDS' });
     }
   },
   filters: {
-    uppercase: function(value) {
+    uppercase: function (value) {
       if (!value) return '';
       return value.toUpperCase();
     }
@@ -56,7 +62,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 /* Tic Tac Toe board */
 .fieldContainer {
   width: 312px;
@@ -77,7 +82,7 @@ export default {
   background-color: #fbfbfb;
 }
 
-.clearButton{
+.clearButton {
   margin-bottom: 15px;
 }
 </style>
