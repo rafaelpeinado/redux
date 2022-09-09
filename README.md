@@ -220,3 +220,16 @@ Temos três passos:
 
 **Vuex** é um padrão e biblioteca de gerenciamento de estado. Inspirado por Flux, Redux e Elm. Ou seja, a melhor sugestão para usar no Vue é o Vuex.
 
+### Angular.js with Redux
+Usar Lifecycle Hooks, ngOnInit() para atualização com subscribe e ngOnDestroy() para limpá-lo quando terminar.
+
+Como no Vue, o Angular tem bibliotecas próprias.
+* uma opção é o Angular 2+ bindings for Redux, que é uma versão Angular do React Redux
+* a outra é o NgRx e temos: 
+* * @ngrx/store - que é o gerenciamento de estado com alimentação RxJS para aplicativos Angular inspirados no Redux
+
+
+
+
+
+
